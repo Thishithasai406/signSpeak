@@ -1,5 +1,3 @@
-# ASL Sign Language to Text and Speech Conversion
-
 # ✋ ASL Sign Language to Text and Speech Conversion
 
 This project performs **real-time American Sign Language (ASL) alphabet recognition** (A–Z) and converts hand signs into **text** and optionally **speech**.
@@ -10,7 +8,7 @@ It uses:
 - **Rule-based logic** to refine group predictions into **26 ASL letters**.
 - **Spell checking** + **Text-to-Speech** for enhanced communication.
 
-The model is trained on the **ASL Mediapipe Landmarked Dataset (A–Z)** available on Kaggle:
+📌 The model is trained on the **ASL Mediapipe Landmarked Dataset (A–Z)** available on Kaggle:
 
 > https://www.kaggle.com/datasets/granthgaurav/asl-mediapipe-converted-dataset
 
@@ -19,13 +17,13 @@ trained weights are saved in the repository so you can run real‑time inference
 
 ---
 
-## ASL Alphabet Reference
+## 🔤 ASL Alphabet Reference
 
-![ASL Alphabet A-Z](C:\SignSpeak\sign.png)
+![ASL Alphabet A-Z](assets/sign.png)
 
 ---
 
-## Why Alphabet-Level Recognition Instead of Whole Words
+## ❓Why Alphabet-Level Recognition Instead of Whole Words
 
 This project focuses on recognizing individual ASL alphabet letters (A–Z) rather than full ASL words. The main reasons are:
 | Benefit | Description |
@@ -41,7 +39,6 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
 ---
 
 ## 🚀 Features
-## 📌 Key Features
 
 ✔ Real-time ASL alphabet recognition  
 ✔ 21-point hand landmark tracking  
@@ -55,7 +52,7 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
 
 ---
 
-## 1. Dataset
+## 1. 📚 Dataset
 
 - **Name**: ASL Mediapipe Landmarked Dataset (A–Z)
 - **Source**: Kaggle – `granthgaurav/asl-mediapipe-converted-dataset`
@@ -65,9 +62,9 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
 - **Data format**:
   - Images where the hands have already been processed with **Mediapipe**.
   - Each image encodes the **hand landmarks** (finger joint locations and orientation) as a rendered skeleton.
-  -Mediapipe provides **x, y, z** coordinates for each joint → converted into clean **white-background skeleton images** used for training.
+  - Mediapipe provides **x, y, z** coordinates for each joint → converted into clean **white-background skeleton images** used for training.
 
-### Why We Used Skeleton Dataset Instead of Bare Hand Images
+### 🎯Why We Used Skeleton Dataset Instead of Bare Hand Images
 
 We used a Mediapipe-landmark skeleton dataset instead of raw hand camera images because:
 
@@ -96,7 +93,7 @@ We used a Mediapipe-landmark skeleton dataset instead of raw hand camera images 
 > than training with bare hand images.
 
 
-### Mediapipe Hand Landmarks
+### ✋Mediapipe Hand Landmarks
 
 ![Hand Landmarks](C:\SignSpeak\handlandmark.png)
 
@@ -120,14 +117,13 @@ These 21 landmarks are used to:
 
 ---
 
-## 2. Overall Method
+## 2. 🧠 Model Training
 
 The system is split into two main parts:
 
 1. **Offline training** (on the Kaggle dataset)
 2. **Online inference application** (`prediction.py`) that runs on a webcam stream
 
-## 3. Model Training
 
 ### 🔹 Dataset
 - Used ASL Mediapipe Skeleton Dataset from Kaggle
@@ -157,7 +153,7 @@ The system is split into two main parts:
 
 ---
 
-## 3. Why this Method
+## 3. 🧩 Why this Method
 
 ### 3.1. Why Mediapipe Landmarks + Skeleton Images
 
@@ -194,6 +190,7 @@ So instead, we convert the 26 letters into **8 larger gesture groups**:
 | 5 | P, Q, Z |
 | 6 | X |
 | 7 | Y, J |
+
 This gives multiple benefits:
 
 #### ✔ Higher Accuracy
@@ -208,8 +205,6 @@ Fine separation is done later using **geometric rules** on Mediapipe landmarks.
 
 #### ✔ Faster & More Stable Training
 Less output complexity → faster training & real-time prediction stability.
-
----
 
 👉 Final Refinement:
 Once the model predicts the correct **group**,  
@@ -231,7 +226,7 @@ This hybrid approach takes advantage of both deep learning and classical rule‑
 
 ---
 
-## 4. Training Setup 
+## 4. ⚙️Training Setup 
 
 
 - **Input**: 400×400×3 images of Mediapipe‑rendered hand skeletons.
@@ -250,7 +245,7 @@ This hybrid approach takes advantage of both deep learning and classical rule‑
 
 ---
 
-## 5. Project Structure
+## 5. 🗂️ Project Structure
 
 - `prediction.py`
   - Main GUI application built with Tkinter.
@@ -266,7 +261,7 @@ This hybrid approach takes advantage of both deep learning and classical rule‑
 
 ---
 
-## 6. How to Run the Application
+## 6. 🏃 How to Run the Application
 
 ### 6.1. Prerequisites
 
@@ -308,7 +303,6 @@ This will:
 - Offer spelling suggestions below the camera view.
 - Allow you to **Clear** the sentence or **Speak** it via text‑to‑speech.
 
----
 
 ### 6.4. Notes on Gestures and Special Controls
 
@@ -349,16 +343,15 @@ and **word suggestions** are displayed for correction.
 User can clear the entire text with one click.
 
 9️⃣ **Speak Button**  
-`pyttsx3` converts the written sentence to speech  
+pyttsx3 converts the written sentence to speech  
 allowing the system to **speak the predicted text** out loud.
----
 
 📌 Summary:  
 Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 
 ---
 
-## 7. Possible Extensions
+## 7. 🌟 Possible Extensions
 
 - **Re‑training or fine‑tuning** on:
   - More users and lighting conditions.
@@ -369,7 +362,7 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Multi-language support**: Add support for other sign language systems such as ISL, BSL, etc.
 ---
 
-## 8. Acknowledgements
+## 8. 🙌 Acknowledgements
 
 - **Dataset**: [ASL Mediapipe Landmarked Dataset (A–Z)](https://www.kaggle.com/datasets/granthgaurav/asl-mediapipe-converted-dataset)
   by Granth Gaurav.
@@ -377,4 +370,5 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Deep learning framework**: TensorFlow with Keras.
 - **Text‑to‑speech**: pyttsx3.
 - **Spell checking**: pyenchant.
+
 - **Computer Vision Processing**: OpenCV (for image capture, processing, and display)
