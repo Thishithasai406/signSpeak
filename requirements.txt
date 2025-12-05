@@ -1,0 +1,13 @@
+numpy==1.24.3
+opencv-python==4.8.1.78
+# Mediapipe 0.10.x uses protobuf >=3.20, compatible with TF 2.13
+mediapipe==0.10.14
+tensorflow==2.13.0
+Pillow==10.4.0
+pyttsx3==2.90
+pywin32==306
+pyenchant==3.2.2
+# cvzone version compatible with mediapipe 0.10.x
+cvzone==1.5.6
+# Pin protobuf to satisfy both TF 2.13 and mediapipe 0.10.x
+protobuf==4.25.3
