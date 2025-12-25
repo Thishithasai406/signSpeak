@@ -19,7 +19,7 @@ trained weights are saved in the repository so you can run real‑time inference
 
 ## 🔤 ASL Alphabet Reference
 
-![ASL Alphabet A-Z](assets/sign.png)
+(![ASL Alphabet A-Z](sign.png)
 
 ---
 
@@ -95,7 +95,7 @@ We used a Mediapipe-landmark skeleton dataset instead of raw hand camera images 
 
 ### ✋Mediapipe Hand Landmarks
 
-![Hand Landmarks](C:\SignSpeak\handlandmark.png)
+![Hand Landmarks](handlandmark.png)
 
 The Mediapipe framework detects and tracks **21 hand landmarks** on each hand. These landmarks represent key anatomical points:
 
@@ -241,23 +241,17 @@ This hybrid approach takes advantage of both deep learning and classical rule‑
 
 ### 4.1. Evaluation Results (Group‑Level)
 
-(C:\SignSpeak\C:\SignSpeak\Evaluation.png)
+![Evaluation](Evaluation.png)
 
 ---
 
 ## 5. 🗂️ Project Structure
 
-- `prediction.py`
-  - Main GUI application built with Tkinter.
-  - Opens the webcam, detects hands, renders skeleton images, runs the CNN, applies the rule‑based logic, and
-    updates the UI.
-  - Provides suggestion buttons and **Speak** / **Clear** actions.
-- `cnn8grps_rad1_model.h5`
-  - Trained Keras model for 8‑group classification.
-- `dataset/`
-  - Placeholder directory; training images were obtained from Kaggle and organized into train/val/test splits.
-- `requirements.txt`
-  - Python dependencies needed to run the project.
+
+- `prediction.py` – Main application  
+- `cnn8grps_rad1_model.h5` – Trained CNN model  
+- `dataset/` – Training dataset  
+- `requirements.txt` – Dependencies  
 
 ---
 
@@ -372,3 +366,4 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Spell checking**: pyenchant.
 
 - **Computer Vision Processing**: OpenCV (for image capture, processing, and display)
+
