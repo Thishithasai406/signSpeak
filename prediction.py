@@ -11,8 +11,10 @@ from cvzone.HandTrackingModule import HandDetector
 from string import ascii_uppercase
 import enchant
 ddd=enchant.Dict("en_US")
-hd = HandDetector(maxHands=1)
-hd2 = HandDetector(maxHands=1)
+# Improve hand detection with better parameters for reliability
+# Lower detection confidence for better sensitivity
+hd = HandDetector(maxHands=1, detectionCon=0.5, minTrackCon=0.3)
+hd2 = HandDetector(maxHands=1, detectionCon=0.5, minTrackCon=0.3)
 import tkinter as tk
 from PIL import Image, ImageTk
 
@@ -27,9 +29,36 @@ os.environ["THEANO_FLAGS"] = "device=cuda, assert_no_cpu_op=True"
 class Application:
 
     def __init__(self):
+        # Initialize camera with error handling
         self.vs = cv2.VideoCapture(0)
+        if not self.vs.isOpened():
+            # Try alternative camera indices
+            for i in range(1, 5):
+                self.vs = cv2.VideoCapture(i)
+                if self.vs.isOpened():
+                    break
+            if not self.vs.isOpened():
+                raise Exception("Could not open camera")
+        
+        # Set camera properties for better performance
+        self.vs.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        
+        # Give camera time to initialize - read a few frames to warm up
+        import time
+        for _ in range(5):
+            ret, _ = self.vs.read()
+            if ret:
+                break
+            time.sleep(0.1)
+        
         self.current_image = None
-        self.model = load_model('cnn8grps_rad1_model.h5', compile=False)
+        
+        # Load model with error handling
+        model_path = 'cnn8grps_rad1_model.h5'
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+        self.model = load_model(model_path, compile=False)
         self.speak_engine=pyttsx3.init()
         self.speak_engine.setProperty("rate",100)
         voices=self.speak_engine.getProperty("voices")
@@ -312,7 +341,8 @@ class Application:
         self.white_template = np.ones((400, 400, 3), dtype=np.uint8) * 255
 
         # Run prediction not on every single frame to keep UI smooth
-        self.prediction_interval = 3
+        # Reduced interval for smoother predictions
+        self.prediction_interval = 1
 
         self.video_loop()
     
@@ -589,6 +619,14 @@ class Application:
 
     def video_loop(self):
         try:
+            # Check if camera is still open
+            if not self.vs.isOpened():
+                # Try to reopen camera
+                self.vs = cv2.VideoCapture(0)
+                if not self.vs.isOpened():
+                    self.root.after(100, self.video_loop)
+                    return
+            
             ok, frame = self.vs.read()
             if not ok or frame is None:
                 # Camera not ready; try again shortly
@@ -600,14 +638,22 @@ class Application:
                 cv2image_copy = np.array(cv2image)
                 cv2image = cv2.cvtColor(cv2image, cv2.COLOR_BGR2RGB)
                 # Resize to fit camera panel dynamically
-                panel_width = self.panel.winfo_width()
-                panel_height = self.panel.winfo_height()
-                if panel_width > 1 and panel_height > 1:
-                    cv2image_resized = cv2.resize(cv2image, (panel_width, panel_height))
-                else:
-                    cv2image_resized = cv2.resize(cv2image, (600, 500))
+                try:
+                    panel_width = self.panel.winfo_width()
+                    panel_height = self.panel.winfo_height()
+                except:
+                    panel_width = 600
+                    panel_height = 500
+                
+                # Ensure we have valid dimensions
+                if panel_width <= 1 or panel_height <= 1:
+                    panel_width = 600
+                    panel_height = 500
+                
+                cv2image_resized = cv2.resize(cv2image, (panel_width, panel_height))
                 self.current_image = Image.fromarray(cv2image_resized)
                 imgtk = ImageTk.PhotoImage(image=self.current_image)
+                # Keep reference to prevent garbage collection
                 self.panel.imgtk = imgtk
                 self.panel.config(image=imgtk)
 
@@ -700,104 +746,15 @@ class Application:
                     self.panel5.config(text=self.str, font=("Arial", 20), fg=self.white)
                 else:
                     self.panel5.config(text="Your sentence will appear here...", font=("Arial", 20), fg=self.gray_400)
-        except Exception:
-            # Fallback processing without crashing the loop
-            hands = hd.findHands(cv2image, draw=False, flipType=True)
-            cv2image_copy=np.array(cv2image)
-            cv2image = cv2.cvtColor(cv2image, cv2.COLOR_BGR2RGB)
-            # Resize to fit camera panel dynamically
-            panel_width = self.panel.winfo_width()
-            panel_height = self.panel.winfo_height()
-            if panel_width > 1 and panel_height > 1:
-                cv2image_resized = cv2.resize(cv2image, (panel_width, panel_height))
-            else:
-                cv2image_resized = cv2.resize(cv2image, (600, 500))
-            self.current_image = Image.fromarray(cv2image_resized)
-            imgtk = ImageTk.PhotoImage(image=self.current_image)
-            self.panel.imgtk = imgtk
-            self.panel.config(image=imgtk)
-
-            if hands:
-                hand = hands[0]
-                x, y, w, h = hand['bbox']
-                image = cv2image_copy[y - offset:y + h + offset, x - offset:x + w + offset]
-
-                # Use preloaded template instead of reading from disk every frame
-                white = self.white_template.copy() if self.white_template is not None else None
-                if white is None:
-                    white = np.zeros((400, 400, 3), dtype=np.uint8)
-                # img_final=img_final1=img_final2=0
-
-                handz = hd2.findHands(image, draw=False, flipType=True)
-                self.ccc += 1
-                if handz:
-                    hand = handz[0]
-                    self.pts = hand['lmList']
-                    # x1,y1,w1,h1=hand['bbox']
-
-                    os = ((400 - w) // 2) - 15
-                    os1 = ((400 - h) // 2) - 15
-                    for t in range(0, 4, 1):
-                        cv2.line(white, (self.pts[t][0] + os, self.pts[t][1] + os1), (self.pts[t + 1][0] + os, self.pts[t + 1][1] + os1),
-                                 (0, 255, 0), 3)
-                    for t in range(5, 8, 1):
-                        cv2.line(white, (self.pts[t][0] + os, self.pts[t][1] + os1), (self.pts[t + 1][0] + os, self.pts[t + 1][1] + os1),
-                                 (0, 255, 0), 3)
-                    for t in range(9, 12, 1):
-                        cv2.line(white, (self.pts[t][0] + os, self.pts[t][1] + os1), (self.pts[t + 1][0] + os, self.pts[t + 1][1] + os1),
-                                 (0, 255, 0), 3)
-                    for t in range(13, 16, 1):
-                        cv2.line(white, (self.pts[t][0] + os, self.pts[t][1] + os1), (self.pts[t + 1][0] + os, self.pts[t + 1][1] + os1),
-                                 (0, 255, 0), 3)
-                    for t in range(17, 20, 1):
-                        cv2.line(white, (self.pts[t][0] + os, self.pts[t][1] + os1), (self.pts[t + 1][0] + os, self.pts[t + 1][1] + os1),
-                                 (0, 255, 0), 3)
-                    cv2.line(white, (self.pts[5][0] + os, self.pts[5][1] + os1), (self.pts[9][0] + os, self.pts[9][1] + os1), (0, 255, 0),
-                             3)
-                    cv2.line(white, (self.pts[9][0] + os, self.pts[9][1] + os1), (self.pts[13][0] + os, self.pts[13][1] + os1), (0, 255, 0),
-                             3)
-                    cv2.line(white, (self.pts[13][0] + os, self.pts[13][1] + os1), (self.pts[17][0] + os, self.pts[17][1] + os1),
-                             (0, 255, 0), 3)
-                    cv2.line(white, (self.pts[0][0] + os, self.pts[0][1] + os1), (self.pts[5][0] + os, self.pts[5][1] + os1), (0, 255, 0),
-                             3)
-                    cv2.line(white, (self.pts[0][0] + os, self.pts[0][1] + os1), (self.pts[17][0] + os, self.pts[17][1] + os1), (0, 255, 0),
-                             3)
-
-                    for i in range(21):
-                        cv2.circle(white, (self.pts[i][0] + os, self.pts[i][1] + os1), 2, (0, 0, 255), 1)
-
-                    res = white
-
-                    # Throttle prediction to every Nth processed frame
-                    if self.ccc % self.prediction_interval == 0:
-                        self.predict(res)
-
-                        self.current_image2 = Image.fromarray(res)
-                        imgtk = ImageTk.PhotoImage(image=self.current_image2)
-                        self.panel2.imgtk = imgtk
-                        self.panel2.config(image=imgtk)
-
-                        if self.current_symbol and self.current_symbol.strip():
-                            self.panel3.config(text=self.current_symbol, font=("Arial", 32, "bold"), fg=self.cyan_400)
-                            self.char_canvas.itemconfig("cursor", state="hidden")
-                        else:
-                            self.panel3.config(text="")
-                            self.char_canvas.itemconfig("cursor", state="normal")
-
-                        #self.panel4.config(text=self.word, font=("Courier", 30))
-
-                        self.update_suggestion_button(self.b1, self.word1, self.action1)
-                        self.update_suggestion_button(self.b2, self.word2, self.action2)
-                        self.update_suggestion_button(self.b3, self.word3, self.action3)
-                        self.update_suggestion_button(self.b4, self.word4, self.action4)
-
-            if self.str.strip():
-                self.panel5.config(text=self.str, font=("Arial", 24), fg=self.white)
-            else:
-                self.panel5.config(text="Your sentence will appear here...", font=("Arial", 24), fg=self.gray_400)
-        except Exception:
-            # Swallow unexpected errors to keep video loop running
-            pass
+        except Exception as e:
+            # Log errors for debugging but keep video loop running
+            try:
+                with open('prediction_errors.log', 'a') as f:
+                    import traceback
+                    f.write(f"Error in video_loop: {str(e)}\n")
+                    f.write(traceback.format_exc() + "\n")
+            except:
+                pass
         finally:
             # Slight delay keeps UI responsive and reduces CPU load
             self.root.after(10, self.video_loop)
