@@ -130,7 +130,7 @@ class Application:
         
         # Window setup
         self.root = tk.Tk()
-        self.root.title("Sign Language To Text Conversion")
+        self.root.title("SignSpeak")
         self.root.protocol('WM_DELETE_WINDOW', self.destructor)
         self.root.geometry("1400x800")
         self.root.configure(bg=self.bg_color)
