@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignSpeak - Learn Sign Language</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        nav {
+            background: rgba(10, 10, 10, 0.15);
+            padding: 0.1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: none;
+            backdrop-filter: blur(10px);
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.4rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #4a9eff;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4a9eff, #6b5fff);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .scroll-animate {
+            opacity: 0;
+            transition: none;
+        }
+
+        .scroll-animate.animate-in {
+            animation-duration: 0.8s;
+            animation-fill-mode: both;
+            animation-timing-function: ease-out;
+        }
+
+        .fade-in-up {
+            animation-name: fadeInUp;
+        }
+
+        .fade-in-left {
+            animation-name: fadeInLeft;
+        }
+
+        .fade-in-right {
+            animation-name: fadeInRight;
+        }
+
+        .hero {
+            margin-top: 56px;
+            min-height: calc(100vh - 56px);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(45, 45, 45, 0.9) 50%, rgba(10, 10, 10, 0.9) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("{{ url_for('static', filename='background.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            filter: blur(4px);
+            transform: scale(1.04);
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.8s ease-out;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideUp 0.8s ease-out 0.2s both;
+            text-shadow: 0 0 40px rgba(74, 158, 255, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: #e0e0e0;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            animation: slideUp 0.8s ease-out 0.4s both;
+            line-height: 1.8;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero .btn {
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+
+        .camera-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            animation: slideUp 1s ease-out 0.5s both;
+        }
+
+        .camera-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .camera-button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            animation: pulse-ring 2s infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.2;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
+
+        .camera-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(74, 158, 255, 0.7);
+        }
+
+        .camera-panel {
+            position: absolute;
+            bottom: 90px;
+            right: 0;
+            width: 400px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 20px;
+            border: 2px solid #4a9eff;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            display: none;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .camera-panel.active {
+            display: block;
+        }
+
+        .camera-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2d2d2d;
+        }
+
+        .camera-panel-header h4 {
+            color: #4a9eff;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .close-panel {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-panel:hover {
+            color: #4a9eff;
+            transform: rotate(90deg);
+        }
+
+        .camera-preview {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2d2d2d;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .camera-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.2), transparent);
+            animation: scan 3s infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .camera-status {
+            text-align: center;
+            color: #4a9eff;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .camera-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            background: #0a0a0a;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #2d2d2d;
+        }
+
+        .info-item-icon {
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-item-text {
+            color: #888;
+            font-size: 0.75rem;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .camera-controls button {
+            flex: 1;
+            padding: 0.5rem;
+            background: #4a9eff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .camera-controls button:hover {
+            background: #6b5fff;
+        }
+
+        .camera-controls button:disabled {
+            background: #2d2d2d;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.6);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            padding: 4rem 0;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid #2d2d2d;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(107, 95, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card h3 {
+            color: #4a9eff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card p {
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .about-desc-card {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem 3rem;
+            margin-top: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .about-desc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(74, 158, 255, 0.4);
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            padding: 1rem;
+        }
+
+        .alphabet-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alphabet-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 158, 255, 0.2) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .alphabet-card:hover::before {
+            width: 200%;
+            height: 200%;
+        }
+
+        .alphabet-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(74, 158, 255, 0.4);
+        }
+
+        .alphabet-card .letter {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4a9eff;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1rem;
+        }
+
+        .alphabet-card .sign-img {
+            width: 180px;
+            height: 180px;
+            background: #0a0a0a;
+            margin: 0 auto;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            border: 2px solid #2d2d2d;
+            overflow: hidden;
+        }
+
+        .alphabet-card .sign-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+        }
+
+        .alphabet-card .sign-img .emoji {
+            font-size: 3rem;
+        }
+
+        .quiz-welcome {
+            text-align: center;
+            max-width: 800px;
+            margin: 4rem auto;
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        .quiz-welcome h3 {
+            font-size: 2.5rem;
+            color: #4a9eff;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-welcome p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #b0b0b0;
+        }
+
+        .quiz-mode-selection {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2.5rem 0;
+        }
+
+        .mode-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #2d2d2d;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 280px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(74, 158, 255, 0.4);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-card h4 {
+            color: #4a9eff;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-card p {
+            color: #b0b0b0;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .quiz-welcome .trophy {
+            font-size: 5rem;
+            margin: 2rem 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .quiz-container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #2d2d2d;
+        }
+
+        .quiz-stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 1.1rem;
+            color: #b0b0b0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item strong {
+            color: #4a9eff;
+            font-size: 1.3rem;
+        }
+
+        .practice-section {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(45, 45, 45, 0.9) 50%, rgba(10, 10, 10, 0.9) 100%);
+            border-radius: 0;
+            padding: 2rem;
+            margin: 0;
+            min-height: calc(100vh - 56px);
+            width: 100%;
+        }
+
+        .practice-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("{{ url_for('static', filename='background.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            filter: blur(4px);
+            transform: scale(1.06);
+            z-index: 0;
+        }
+
+        .practice-section > .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .learn-section {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(45, 45, 45, 0.9) 50%, rgba(10, 10, 10, 0.9) 100%);
+            border-radius: 0;
+            padding: 2rem;
+            margin: 0;
+            min-height: calc(100vh - 56px);
+            width: 100%;
+        }
+
+        .learn-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("{{ url_for('static', filename='background.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            filter: blur(80px);
+            transform: scale(1.06);
+            z-index: 0;
+        }
+
+        .learn-section > .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .quiz-question {
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+            color: #4a9eff;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .quiz-sign-display {
+            text-align: center;
+            margin: 2rem 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0a;
+            border-radius: 20px;
+            border: 2px solid #2d2d2d;
+            overflow: hidden;
+        }
+
+        .quiz-sign-display img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .quiz-sign-display .emoji {
+            font-size: 8rem;
+        }
+
+        .quiz-mode-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .quiz-mode-btn {
+            padding: 0.8rem 2rem;
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border: 2px solid #2d2d2d;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .quiz-mode-btn.active {
+            background: linear-gradient(135deg, #4a9eff 0%, #6b5fff 100%);
+            border-color: #4a9eff;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1.5rem;
+            background: #0a0a0a;
+            border: 2px solid #2d2d2d;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .quiz-option img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+            margin-bottom: 0.3rem;
+        }
+
+        .quiz-option .emoji {
+            font-size: 3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .quiz-option:hover {
+            border-color: #4a9eff;
+            background: #1a1a1a;
+            transform: scale(1.05);
+        }
+
+        .quiz-option.correct {
+            border-color: #4caf50;
+            background: linear-gradient(135deg, #1b4d1b 0%, #2d6d2d 100%);
+            animation: correctPulse 0.5s;
+        }
+
+        .quiz-option.wrong {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #4d1b1b 0%, #6d2d2d 100%);
+            animation: shake 0.5s;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .quiz-result {
+            margin-top: 2rem;
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: 600;
+            min-height: 40px;
+        }
+
+        .quiz-complete {
+            text-align: center;
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        .quiz-complete h3 {
+            font-size: 2.5rem;
+            color: #4a9eff;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-complete .final-score {
+            font-size: 3rem;
+            color: #4caf50;
+            margin: 2rem 0;
+            font-weight: bold;
+        }
+
+        .quiz-complete .trophy {
+            font-size: 6rem;
+            margin: 1rem 0;
+            animation: bounce 1s infinite;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            border: 2px solid #4a9eff;
+            animation: scaleIn 0.4s ease-out;
+            position: relative;
+        }
+
+        .modal-content h3 {
+            color: #4a9eff;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .modal-sign-image {
+            width: 320px;
+            height: 380px;
+            margin: 1.5rem auto;
+            background: #0a0a0a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2d2d2d;
+            overflow: hidden;
+        }
+
+        .modal-sign-image img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .modal-sign-image .emoji {
+            font-size: 10rem;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: center;
+            color: #b0b0b0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #4a9eff;
+            transform: rotate(90deg);
+        }
+
+        footer {
+            background: #1a1a1a;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid #2d2d2d;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                min-height: calc(100vh - 70px);
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+
+            .camera-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .camera-button {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .camera-panel {
+                width: calc(100vw - 40px);
+                right: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">SignSpeak</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')">Home</a></li>
+                <li><a href="#" onclick="scrollToSection('features')">Features</a></li>
+                <li><a href="#" onclick="showPage('learn')">Learn</a></li>
+                <li><a href="#" onclick="showPage('practice')">Practice</a></li>
+                <li><a href="#" onclick="scrollToSection('about')">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to SignSpeak</h1>
+                <div class="hero-desc-card">
+                    <p>Every hand movement tells a story. Learn to listen with your eyes and speak with your heart. Even in silence, hands reveal the dreams we hide and the fears we carry.</p>
+                </div>
+                <a href="#" onclick="showPage('learn')" class="btn">Start Learning</a>
+    </div>
+        </section>
+
+        <section id="features">
+    <div class="container">
+                <h2>Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📹</div>
+                        <h3>Live Camera Recognition</h3>
+                        <p>Use your camera to practice signs in real-time with instant feedback and accuracy detection.</p>
+            </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3>Interactive Learning</h3>
+                        <p>Learn all 26 ASL alphabet signs with high-quality images and detailed descriptions.</p>
+            </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Practice Quizzes</h3>
+                        <p>Test your knowledge with engaging quizzes and track your progress with scores and streaks.</p>
+        </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <h3>Easy to Use</h3>
+                        <p>Intuitive interface designed for learners of all ages and skill levels with smooth animations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Progress Tracking</h3>
+                        <p>Monitor your learning journey with detailed statistics, streak counters, and performance analytics.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>Beautiful Interface</h3>
+                        <p>Modern, elegant design with smooth animations and responsive layouts for the best learning experience.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <h2>About SignSpeak</h2>
+                <div class="about-desc-card">
+                    <div class="about-content">
+                       <p>To be honest, my journey with sign language began after watching a K-drama, <em>Twinkling Watermelon</em>. It might sound funny, but I was mesmerized by how so much emotion and meaning could be shared without a single word. That moment made me realize the incredible power of hand movements to tell stories, express feelings, and connect people.</p>
+<p>This fascination grew into <strong>SignSpeak</strong>—my way of combining technology with empathy. I wanted to create a space where learning American Sign Language (ASL) feels natural, engaging, and heartfelt. Through this project, I hope to bridge the gap between hearing and non-hearing communities, inspire curiosity, and give everyone the confidence to communicate through the universal language of gestures.</p>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- LEARN PAGE -->
+    <div id="learn" class="page">
+        <section class="learn-section" style="margin-top: 60px;">
+            <div class="container">
+                <h2 class="scroll-animate fade-in-up">Learn ASL Alphabet</h2>
+                <p class="scroll-animate fade-in-up" style="text-align: center; margin-bottom: 3rem; font-size: 1.2rem; color: #b0b0b0; animation-delay: 0.1s;">Click on any letter to see the hand sign and learn how to sign it</p>
+                <div class="alphabet-grid" id="alphabetGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- PRACTICE PAGE -->
+    <div id="practice" class="page">
+        <section class="practice-section" style="margin-top: 60px;">
+            <div class="container">
+                <h2>Practice Quiz</h2>
+                
+                <div id="quizWelcome" class="quiz-welcome">
+                    <div class="trophy">🏆</div>
+                    <h3>Choose Your Quiz Mode</h3>
+                    <p style="font-size: 1.2rem; color: #b0b0b0; margin-bottom: 2rem;">Select how you want to test your skills!</p>
+                    
+                    <div class="quiz-mode-selection">
+                        <div class="mode-card" onclick="startQuizMode('signToLetter')">
+                            <div class="mode-icon">📸</div>
+                            <h4>Sign → Letter</h4>
+                            <p>See a hand sign and choose the correct letter</p>
+                        </div>
+                        
+                        <div class="mode-card" onclick="startQuizMode('letterToSign')">
+                            <div class="mode-icon">✍️</div>
+                            <h4>Letter → Sign</h4>
+                            <p>Choose the correct hand sign for the letter</p>
+                        </div>
+                    </div>
+                    
+                    <p style="font-size: 1rem; color: #888; margin-top: 2.5rem;">Complete 10 questions to finish the quiz!</p>
+                </div>
+            
+                <div id="quizGame" style="display: none;">
+                    <div class="quiz-container">
+                        <div class="quiz-header">
+                            <div class="quiz-stats">
+                                <div class="stat-item">
+                                    <span>Question:</span>
+                                    <strong id="questionNumber">1/10</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Score:</span>
+                                    <strong id="scoreDisplay">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Streak:</span>
+                                    <strong id="streakDisplay">0 🔥</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" id="quizQuestion"></div>
+                        <div class="quiz-sign-display" id="quizSignDisplay"></div>
+                        <div class="quiz-options" id="quizOptions"></div>
+                        <div class="quiz-result" id="quizResult"></div>
+                        <button class="btn" id="nextQuestion" style="margin-top: 2rem; display: none; width: 100%;">Next Question</button>
+        </div>
+    </div>
+
+                <div id="quizComplete" style="display: none;">
+                    <div class="quiz-container quiz-complete">
+                        <div class="trophy" id="completeTrophy">🏆</div>
+                        <h3 id="completeMessage">Amazing Work!</h3>
+                        <div class="final-score" id="finalScore">10/10</div>
+                        <p id="completeText" style="font-size: 1.2rem; color: #b0b0b0; margin-bottom: 2rem;"></p>
+                        <button class="btn" onclick="resetQuiz()" style="margin-top: 1rem;">Try Again</button>
+                        <button class="btn" onclick="showPage('learn')" style="margin-left: 1rem; background: #2d2d2d;">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FLOATING CAMERA WIDGET -->
+    <div class="camera-widget">
+        <button class="camera-button" onclick="toggleCamera()" title="Launch Prediction App">
+            📹
+        </button>
+    </div>
+
+    <div id="letterModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="modalLetter"></h3>
+            <div class="modal-sign-image" id="modalSignContainer">
+                <div class="emoji" id="modalSign"></div>
+            </div>
+            <p id="modalDescription" style="font-size: 1.1rem; line-height: 1.8;"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 SignSpeak. Empowering communication through sign language.</p>
+    </footer>
+
+    <script>
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        
+        // Image paths for hand signs - Replace these with your actual image paths
+        const handSignImages = {
+            'A': '/static/A.png', 'B': '/static/B.png', 'C': '/static/c.png', 'D': '/static/d.png', 'E': '/static/e.png', 'F': '/static/f.png',
+            'G': '/static/g.png', 'H': '/static/h.png', 'I': '/static/i.png', 'J': '/static/j.png', 'K': '/static/k.png', 'L': '/static/l.png',
+            'M': '/static/m.png', 'N': '/static/n.png', 'O': '/static/o.png', 'P': '/static/p.png', 'Q': '/static/q.png', 'R': '/static/r.png',
+            'S': '/static/s.png', 'T': '/static/t.png', 'U': '/static/u.png', 'V': '/static/v.png', 'W': '/static/w.png', 'X': '/static/x.png',
+            'Y': '/static/y.png', 'Z': '/static/z.png'
+        };
+        
+        // Function to check if image exists for a letter
+        function hasImage(letter) {
+            return handSignImages[letter] && handSignImages[letter].trim() !== '';
+        }
+        
+        const signDescriptions = {
+            'A': 'Make a fist with your thumb resting on the side of your hand.',
+            'B': 'Hold your fingers together pointing upward, with your thumb tucked across your palm.',
+            'C': 'Curve your hand and fingers to form the shape of the letter C.',
+            'D': 'Point your index finger straight up while your other fingers and thumb form a circle.',
+            'E': 'Curl all your fingers down toward your palm with your thumb resting across them.',
+            'F': 'Touch the tip of your index finger to your thumb while extending other fingers upward.',
+            'G': 'Point your index finger and thumb horizontally, parallel to each other.',
+            'H': 'Extend your index and middle fingers horizontally, side by side.',
+            'I': 'Make a fist and extend your pinky finger straight up.',
+            'J': 'Make the I sign, then draw the letter J in the air with your pinky.',
+            'K': 'Point your index and middle fingers upward with your thumb between them.',
+            'L': 'Form an L shape by extending your thumb and index finger at a right angle.',
+            'M': 'Make a fist and tuck your thumb under your first three fingers.',
+            'N': 'Make a fist and tuck your thumb under your first two fingers.',
+            'O': 'Form a circle by touching all your fingertips together.',
+            'P': 'Similar to K but angled downward at about 45 degrees.',
+            'Q': 'Similar to G but angled downward, pointing toward the ground.',
+            'R': 'Cross your index and middle fingers while keeping other fingers closed.',
+            'S': 'Make a fist with your thumb resting over your fingers.',
+            'T': 'Make a fist and tuck your thumb between your index and middle finger.',
+            'U': 'Extend your index and middle fingers upward, held closely together.',
+            'V': 'Extend your index and middle fingers upward in a V shape.',
+            'W': 'Extend your index, middle, and ring fingers upward together.',
+            'X': 'Extend your index finger and curve it into a hook shape.',
+            'Y': 'Extend your thumb and pinky finger while keeping other fingers closed.',
+            'Z': 'Draw the letter Z in the air using your index finger.'
+        };
+
+        const handSigns = {
+            'A': '✊', 'B': '🖐️', 'C': '🤌', 'D': '☝️', 'E': '✊',
+            'F': '👌', 'G': '👉', 'H': '☞', 'I': '🤙', 'J': '🤙',
+            'K': '✌️', 'L': '👍', 'M': '✊', 'N': '✊', 'O': '👌',
+            'P': '👇', 'Q': '👇', 'R': '🤞', 'S': '✊', 'T': '✊',
+            'U': '✌️', 'V': '✌️', 'W': '🖖', 'X': '☝️', 'Y': '🤙', 'Z': '☝️'
+        };
+
+        let currentQuestion = {};
+        let score = 0;
+        let questionsAsked = 0;
+        let streak = 0;
+        let quizMode = 'signToLetter';
+        const totalQuestions = 10;
+
+        // Camera variables
+        let cameraStream = null;
+        let cameraInterval = null;
+        let isCameraActive = false;
+
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageName).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Re-observe elements when page changes
+            setTimeout(() => {
+                observeElements();
+            }, 100);
+        }
+
+        const alphabetGrid = document.getElementById('alphabetGrid');
+        alphabet.forEach((letter, index) => {
+            const card = document.createElement('div');
+            card.className = 'alphabet-card scroll-animate fade-in-up';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const hasImg = hasImage(letter);
+            card.innerHTML = `
+                <div class="letter">${letter}</div>
+                <div class="sign-img">
+                    ${hasImg ? 
+                        `<img src="${handSignImages[letter]}" alt="Sign for ${letter}">` : 
+                        `<div class="emoji">${handSigns[letter]}</div>`
+                    }
+                </div>
+            `;
+            card.onclick = () => showLetterDetails(letter);
+            alphabetGrid.appendChild(card);
+        });
+
+        // Scroll Animation Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Function to observe elements
+        function observeElements() {
+            const animateElements = document.querySelectorAll('.scroll-animate');
+            animateElements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Initial observation
+        observeElements();
+
+        function showLetterDetails(letter) {
+            document.getElementById('modalLetter').textContent = `Letter ${letter}`;
+            
+            const modalContainer = document.getElementById('modalSignContainer');
+            const hasImg = hasImage(letter);
+            
+            if (hasImg) {
+                modalContainer.innerHTML = `<img src="${handSignImages[letter]}" alt="Sign for ${letter}">`;
+            } else {
+                modalContainer.innerHTML = `<div class="emoji">${handSigns[letter]}</div>`;
+            }
+            
+            document.getElementById('modalDescription').textContent = signDescriptions[letter];
+            document.getElementById('letterModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('letterModal').classList.remove('active');
+        }
+
+        function startQuizMode(mode) {
+            quizMode = mode;
+            document.getElementById('quizWelcome').style.display = 'none';
+            document.getElementById('quizGame').style.display = 'block';
+            score = 0;
+            questionsAsked = 0;
+            streak = 0;
+            updateStats();
+            generateQuestion();
+        }
+
+        function updateStats() {
+            document.getElementById('questionNumber').textContent = `${questionsAsked + 1}/${totalQuestions}`;
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('streakDisplay').textContent = `${streak} 🔥`;
+        }
+
+        function generateQuestion() {
+            if (questionsAsked >= totalQuestions) {
+                showQuizComplete();
+                return;
+            }
+
+            const correctLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+            const options = [correctLetter];
+            
+            while (options.length < 4) {
+                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+                if (!options.includes(randomLetter)) {
+                    options.push(randomLetter);
+                }
+            }
+            
+            options.sort(() => Math.random() - 0.5);
+            
+            currentQuestion = {
+                correct: correctLetter,
+                options: options
+            };
+            
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const signDisplay = document.getElementById('quizSignDisplay');
+            const questionText = document.getElementById('quizQuestion');
+            
+            const hasImg = hasImage(currentQuestion.correct);
+            
+            if (quizMode === 'signToLetter') {
+                questionText.textContent = 'Which letter does this sign represent?';
+                if (hasImg) {
+                    signDisplay.innerHTML = `<img src="${handSignImages[currentQuestion.correct]}" alt="Hand sign">`;
+                } else {
+                    signDisplay.innerHTML = `<div class="emoji">${handSigns[currentQuestion.correct]}</div>`;
+                }
+                signDisplay.style.display = 'flex';
+            } else {
+                questionText.textContent = `Which sign represents the letter "${currentQuestion.correct}"?`;
+                signDisplay.style.display = 'none';
+            }
+            
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option';
+                
+                if (quizMode === 'signToLetter') {
+                    optionDiv.textContent = option;
+                } else {
+                    const hasOptImg = hasImage(option);
+                    if (hasOptImg) {
+                        optionDiv.innerHTML = `<img src="${handSignImages[option]}" alt="Sign for ${option}">`;
+                    } else {
+                        optionDiv.innerHTML = `<div class="emoji">${handSigns[option]}</div><div style="font-size: 1.1rem;">${option}</div>`;
+                    }
+                }
+                
+                optionDiv.onclick = () => checkAnswer(option, optionDiv);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('quizResult').textContent = '';
+            document.getElementById('nextQuestion').style.display = 'none';
+        }
+
+        function checkAnswer(selected, element) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            if (selected === currentQuestion.correct) {
+                element.classList.add('correct');
+                score++;
+                streak++;
+                document.getElementById('quizResult').innerHTML = `<span style="color: #4caf50;">✓ Correct! Great job!</span>`;
+            } else {
+                element.classList.add('wrong');
+                streak = 0;
+                options.forEach(opt => {
+                    const optText = opt.textContent.trim();
+                    if (optText === currentQuestion.correct || optText.includes(currentQuestion.correct)) {
+                        opt.classList.add('correct');
+                    }
+                });
+                document.getElementById('quizResult').innerHTML = `<span style="color: #f44336;">✗ Incorrect!</span> The correct answer is <strong>${currentQuestion.correct}</strong>`;
+            }
+            
+            questionsAsked++;
+            updateStats();
+            document.getElementById('nextQuestion').style.display = 'block';
+        }
+
+        document.getElementById('nextQuestion').onclick = () => {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'auto';
+                opt.classList.remove('correct', 'wrong');
+            });
+            generateQuestion();
+        };
+
+        function showQuizComplete() {
+            document.getElementById('quizGame').style.display = 'none';
+            document.getElementById('quizComplete').style.display = 'block';
+            
+            const percentage = (score / totalQuestions) * 100;
+            let message, trophy, text;
+            
+            if (percentage === 100) {
+                message = 'Perfect Score! 🎉';
+                trophy = '🏆';
+                text = 'Outstanding! You\'ve mastered all the signs!';
+            } else if (percentage >= 80) {
+                message = 'Excellent Work! 🌟';
+                trophy = '🥇';
+                text = 'Great job! You\'re doing amazing!';
+            } else if (percentage >= 60) {
+                message = 'Good Effort! 💪';
+                trophy = '🥈';
+                text = 'Nice work! Keep practicing to improve!';
+            } else {
+                message = 'Keep Practicing! 📚';
+                trophy = '🥉';
+                text = 'Don\'t give up! Every practice makes you better!';
+            }
+            
+            document.getElementById('completeMessage').textContent = message;
+            document.getElementById('completeTrophy').textContent = trophy;
+            document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
+            document.getElementById('completeText').textContent = text;
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizComplete').style.display = 'none';
+            document.getElementById('quizWelcome').style.display = 'block';
+            score = 0;
+            questionsAsked = 0;
+            streak = 0;
+        }
+
+        // Camera functions - launch prediction.py directly
+        function toggleCamera() {
+            // Show loading message
+            showLoadingMessage();
+            
+            // Launch prediction.py directly without showing any modal
+            fetch('/launch-prediction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                }
+            }).then(() => {
+                // Keep loading message visible until prediction.py is confirmed running
+                // Check periodically if process is running
+                let checkCount = 0;
+                const maxChecks = 80; // Check for up to 40 seconds (80 * 500ms)
+                const minDisplayTime = 30000; // Minimum 30 seconds before hiding (camera takes ~29s to initialize)
+                const startTime = Date.now();
+                
+                const checkInterval = setInterval(() => {
+                    checkCount++;
+                    const elapsedTime = Date.now() - startTime;
+                    const elapsedSeconds = Math.floor(elapsedTime / 1000);
+                    
+                    // Update loading status message with elapsed time
+                    const statusEl = document.getElementById('loadingStatus');
+                    if (statusEl) {
+                        if (elapsedSeconds < 5) {
+                            statusEl.textContent = 'Loading model...';
+                        } else if (elapsedSeconds < 15) {
+                            statusEl.textContent = 'Initializing camera...';
+                        } else if (elapsedSeconds < 29) {
+                            statusEl.textContent = `Camera initializing... (${elapsedSeconds}s)`;
+                        } else if (elapsedSeconds < 32) {
+                            statusEl.textContent = `Almost ready... (${elapsedSeconds}s)`;
+                        } else {
+                            statusEl.textContent = 'Ready!';
+                        }
+                    }
+                    
+                    // Check if prediction process is running
+                    fetch('/check-prediction')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Only hide if process is running AND minimum time has passed
+                            if (data.running && elapsedTime >= minDisplayTime) {
+                                clearInterval(checkInterval);
+                                if (statusEl) {
+                                    statusEl.textContent = 'Ready! Opening application...';
+                                }
+                                // Hide loading message after confirming it's running
+                                setTimeout(() => {
+                                    hideLoadingMessage();
+                                }, 1000);
+                            } else if (checkCount >= maxChecks) {
+                                // Max time reached (40 seconds), hide anyway
+                                clearInterval(checkInterval);
+                                hideLoadingMessage();
+                            }
+                        })
+                        .catch(() => {
+                            // If check fails, continue checking until max time
+                            if (checkCount >= maxChecks) {
+                                clearInterval(checkInterval);
+                                hideLoadingMessage();
+                            }
+                        });
+                }, 500); // Check every 500ms
+                
+            }).catch(err => {
+                console.error('Error launching prediction:', err);
+                hideLoadingMessage();
+            });
+        }
+        
+        function showLoadingMessage() {
+            // Create or show loading overlay
+            let loadingOverlay = document.getElementById('loadingOverlay');
+            if (!loadingOverlay) {
+                loadingOverlay = document.createElement('div');
+                loadingOverlay.id = 'loadingOverlay';
+                loadingOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000;
+                    backdrop-filter: blur(5px);
+                `;
+                loadingOverlay.innerHTML = `
+                    <div style="
+                        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                        padding: 3rem;
+                        border-radius: 20px;
+                        border: 2px solid #4a9eff;
+                        text-align: center;
+                        max-width: 400px;
+                    ">
+                        <div style="font-size: 4rem; margin-bottom: 1rem; animation: spin 1s linear infinite;">⏳</div>
+                        <h3 style="color: #4a9eff; margin-bottom: 1rem; font-size: 1.5rem;">Loading Live Preview</h3>
+                        <p style="color: #e0e0e0; font-size: 1.1rem;">Wait a sec, live preview will start soon...</p>
+                        <p id="loadingStatus" style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">Initializing...</p>
+                        <div style="margin-top: 1.5rem; width: 100%; height: 4px; background: #2d2d2d; border-radius: 2px; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(90deg, #4a9eff, #6b5fff); animation: loading 1.5s ease-in-out infinite;"></div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                        }
+                        @keyframes loading {
+                            0% { width: 0%; }
+                            50% { width: 70%; }
+                            100% { width: 100%; }
+                        }
+                    </style>
+                `;
+                document.body.appendChild(loadingOverlay);
+            } else {
+                loadingOverlay.style.display = 'flex';
+            }
+        }
+        
+        function hideLoadingMessage() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            showPage('home');
+            setTimeout(() => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('letterModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
