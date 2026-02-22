@@ -1,8 +1,10 @@
-# ✋ ASL Sign Language to Text and Speech Conversion
+# ✋ SignSpeak ( ASL Sign Language to Text and Speech Conversion )
 
-This project performs **real-time American Sign Language (ASL) alphabet recognition** (A–Z) and converts hand signs into **text** and optionally **speech**.
+
+This project performs **real-time American Sign Language (ASL) alphabet recognition** (A–Z) and converts hand signs into **text** and optionally **speech** through an integrated web platform called **SignSpeak**, which provides an interactive and user-friendly environment where users can learn ASL alphabets (A–Z), practice gestures using a live webcam preview, take practice tests to evaluate their understanding, receive real-time letter predictions, and convert recognized text into speech, combining computer vision, deep learning, and rule-based logic to deliver accurate, efficient, and accessible sign language recognition.
 
 ![website](SignSpeak.png)
+
 It uses:
 - **Mediapipe** (via CVZone) to track the user’s hand in real-time.
 - **A CNN Model** (`cnn8grps_rad1_model.h5`) trained to predict one of **8 gesture groups**.
@@ -41,6 +43,8 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
 
 ## 🚀 Features
 
+### 🔹 Core AI Features
+
 ✔ Real-time ASL alphabet recognition  
 ✔ 21-point hand landmark tracking  
 ✔ Skeleton rendering input to CNN  
@@ -48,8 +52,14 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
 ✔ Rule-based refinement to A-Z  
 ✔ Sentence construction using gestures  
 ✔ Spell suggestions using `pyenchant`  
-✔ Text-to-speech output using `pyttsx3`  
-✔ Simple and user-friendly Tkinter GUI  
+✔ Text-to-speech output using `pyttsx3`
+
+### 🌐 Website (SignSpeak) Features
+
+✔ Learn Alphabets (A–Z) interactive section  
+✔ Practice mode with live webcam preview and real-time feedback  
+✔ Practice tests to evaluate user learning  
+✔ Clean and user-friendly web interface  
 
 ---
 
@@ -367,5 +377,6 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Spell checking**: pyenchant.
 
 - **Computer Vision Processing**: OpenCV (for image capture, processing, and display)
+
 
 
