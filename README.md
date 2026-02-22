@@ -75,6 +75,8 @@ While alphabet-based communication is slower than using full ASL vocabulary, it 
   - Each image encodes the **hand landmarks** (finger joint locations and orientation) as a rendered skeleton.
   - Mediapipe provides **x, y, z** coordinates for each joint → converted into clean **white-background skeleton images** used for training.
 
+
+
 ### 🎯Why We Used Skeleton Dataset Instead of Bare Hand Images
 
 We used a Mediapipe-landmark skeleton dataset instead of raw hand camera images because:
@@ -104,9 +106,13 @@ We used a Mediapipe-landmark skeleton dataset instead of raw hand camera images 
 > than training with bare hand images.
 
 
+
+
 ### ✋Mediapipe Hand Landmarks
 
 ![Hand Landmarks](handlandmark.png)
+
+
 
 The Mediapipe framework detects and tracks **21 hand landmarks** on each hand. These landmarks represent key anatomical points:
 
@@ -259,8 +265,14 @@ This hybrid approach takes advantage of both deep learning and classical rule‑
 ## 5. 🗂️ Project Structure
 
 
-- `prediction.py` – Main application  
-- `cnn8grps_rad1_model.h5` – Trained CNN model  
+- `templates/` – HTML templates for the SignSpeak web interface  
+- `app.py` – Flask web application connecting frontend with prediction system  
+- `prediction.py` – Core real-time ASL recognition logic  
+- `cnn8grps_rad1_model.h5` – Trained CNN model (8-group classifier)   
+- `SignSpeak.png` – Website preview image used in README  
+- `sign.png` – ASL alphabet reference image  
+- `handlandmark.png` – Mediapipe hand landmark diagram  
+- `Evaluation.png` – Model evaluation results   
 - `dataset/` – Training dataset  
 - `requirements.txt` – Dependencies  
 
@@ -297,13 +309,15 @@ Make sure you have the following key packages (they are listed in `requirements.
 From the project root:
 
 ```bash
-python prediction.py
+python app.py
 ```
+Then open your browser and go to:
+http://localhost:5000
 
 This will:
 
-- Open a GUI window.
-- Start the webcam feed on the left side.
+- Openthe SignSpeak web application interface.
+- Start the webcam feed when Live Preview is clicked.
 - Continuously detect your hand and display the recognized character and sentence on the right.
 - Offer spelling suggestions below the camera view.
 - Allow you to **Clear** the sentence or **Speak** it via text‑to‑speech.
@@ -377,6 +391,7 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Spell checking**: pyenchant.
 
 - **Computer Vision Processing**: OpenCV (for image capture, processing, and display)
+
 
 
 
