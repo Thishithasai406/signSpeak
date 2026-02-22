@@ -2,6 +2,7 @@
 
 This project performs **real-time American Sign Language (ASL) alphabet recognition** (A–Z) and converts hand signs into **text** and optionally **speech**.
 
+![website](SignSpeak.png)
 It uses:
 - **Mediapipe** (via CVZone) to track the user’s hand in real-time.
 - **A CNN Model** (`cnn8grps_rad1_model.h5`) trained to predict one of **8 gesture groups**.
@@ -366,4 +367,5 @@ Camera → Mediapipe (features) → CNN Model (Group) → Rules (Final Letter)
 - **Spell checking**: pyenchant.
 
 - **Computer Vision Processing**: OpenCV (for image capture, processing, and display)
+
 
