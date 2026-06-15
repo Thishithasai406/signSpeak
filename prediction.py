@@ -634,7 +634,7 @@ class Application:
                 return
             cv2image = cv2.flip(frame, 1)
             if cv2image is not None and cv2image.size != 0:
-                hands, _ = hd.findHands(cv2image, draw=False, flipType=True)
+                hands = hd.findHands(cv2image, draw=False, flipType=True)
                 cv2image_copy = np.array(cv2image)
                 cv2image = cv2.cvtColor(cv2image, cv2.COLOR_BGR2RGB)
                 # Resize to fit camera panel dynamically
@@ -679,7 +679,7 @@ class Application:
                         white = np.zeros((400, 400, 3), dtype=np.uint8)
                     # img_final=img_final1=img_final2=0
                     if image.size != 0:
-                        handz, _ = hd2.findHands(image, draw=False, flipType=True)
+                        handz = hd2.findHands(image, draw=False, flipType=True)
                         self.ccc += 1
                         if handz:
                             hand = handz[0]
