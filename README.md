@@ -33,7 +33,6 @@ Built with Flask, TensorFlow, MediaPipe, and OpenCV, it performs **real-time ASL
 - [🗂️ Project Structure](#project-structure)
 - [🖥️ Tech Stack](#tech-stack)
 - [📄 Pages & Sections](#pages--sections)
-- [🔌 API Routes](#api-routes)
 - [🚀 Getting Started](#getting-started)
 - [🧠 Model & Dataset](#model--dataset)
 - [📝 Sentence Construction](#sentence-construction)
@@ -223,21 +222,7 @@ signSpeak-main/
 
 ---
 
-## 🔌 API Routes
 
-All routes are served by Flask on `http://localhost:5000`.
-
-| Route | Method | Description |
-|---|---|---|
-| `/` | GET | Serve the main SignSpeak web interface (`index.html`) |
-| `/launch-prediction` | POST | Launch `prediction.py` as a background desktop process |
-| `/check-prediction` | GET | Check if the prediction process is still running |
-| `/static/<filename>` | GET | Serve ASL sign images and background assets |
-
-<p align="right">(<a href="#signspeak">⬆ Back to top</a>)</p>
-
-
----
 
 ## 🚀 Getting Started
 
