@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
-**SignSpeak** is a full-stack sign language learning and recognition platform designed to make American Sign Language (ASL) accessible to everyone. It combines an interactive web interface for learning and practice with a real-time desktop recognition engine powered by computer vision, deep learning, and rule-based logic.
+**SignSpeak** is an ASL sign language learning and recognition platform designed to make American Sign Language accessible to everyone. It combines a Flask-powered web interface for learning and practice with a real-time desktop recognition engine powered by computer vision, deep learning, and rule-based logic.
 
 Built with Flask, TensorFlow, MediaPipe, and OpenCV, it performs **real-time ASL alphabet recognition (A–Z)**, enables **full sentence construction**, offers **spell-check suggestions**, and converts recognized text into **speech**.
 
