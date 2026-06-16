@@ -7,6 +7,12 @@
 <h1 align="center">SignSpeak ✋</h1>
 <p align="center">
   A Real-Time ASL Sign Language to Text and Speech Conversion Platform
+  
+</p>
+<p align="center">
+  <a href="https://drive.google.com/file/d/18wJ-xD2vMhHvqvxd6ohVp1pmlmgncJFH/view?usp=sharing">
+    <img src="https://img.shields.io/badge/▶%20Watch-Demo%20Video-red?style=for-the-badge" alt="Watch Demo">
+  </a>
 </p>
 
 <p align="center">
