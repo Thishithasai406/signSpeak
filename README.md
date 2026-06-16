@@ -9,7 +9,7 @@
   A Real-Time ASL Sign Language to Text and Speech Conversion Platform
   
 <p align="center">
-  <a href="https://drive.google.com/file/d/18ecXShPUJTx3V3qujCJZbQ_bQEhcN4w4/view?usp=sharing">
+  <a href="https://drive.google.com/file/d/1EJn9SbZtLa3CF80feNzlAw41ecfwaX3I/view?usp=sharing">
     <img src="https://img.shields.io/badge/▶%20Watch-Demo%20Video-red?style=for-the-badge" alt="Watch Demo">
   </a>
 </p>
