@@ -10,7 +10,7 @@
   
 </p>
 <p align="center">
-  <a href="https://drive.google.com/file/d/18wJ-xD2vMhHvqvxd6ohVp1pmlmgncJFH/view?usp=sharing">
+  <a href="https://youtu.be/xnS7WkLScf4">
     <img src="https://img.shields.io/badge/▶%20Watch-Demo%20Video-red?style=for-the-badge" alt="Watch Demo">
   </a>
 </p>
