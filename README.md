@@ -8,9 +8,8 @@
 <p align="center">
   A Real-Time ASL Sign Language to Text and Speech Conversion Platform
   
-</p>
 <p align="center">
-  <a href="https://youtu.be/xnS7WkLScf4">
+  <a href="https://drive.google.com/file/d/18ecXShPUJTx3V3qujCJZbQ_bQEhcN4w4/view?usp=sharing">
     <img src="https://img.shields.io/badge/▶%20Watch-Demo%20Video-red?style=for-the-badge" alt="Watch Demo">
   </a>
 </p>
